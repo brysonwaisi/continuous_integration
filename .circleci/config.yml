@@ -5,37 +5,28 @@ orbs:
   welcome: circleci/welcome-orb@0.4.1
 
 jobs:
-  print_hello:
+  save_hello_world_output:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - run: echo Hello
-
-  print_world:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - run: echo World!
+      - run: echo "text to output here" > ~/output.txt
+      - persist_to_workspace:
+          root: /
+          paths:
+            - output.txt
   
-  build:
+  print_output_file:
     docker:
-      - image: cimg/base:2020.01
+      - image: circleci/node:13.8.0
     steps:
-      - checkout
-      - run:
-          name: 'echo an env variable part of our project'
-          command: |
-            echo $BRYSON_ENV_VAR
-
+      - attach_workspace:
+          at: ~/
+      - run: cat ~/output.txt
 workflows:
-  welcome:
+  my_workflow:
     jobs:
-      - print_hello
-      - print_world:
+      - save_hello_world_output
+      - print_output_file:
           requires:
-            - print_hello
-  test-env-vars:
-    jobs:
-      - build
-  
-
+            - save_hello_world_output
+      
