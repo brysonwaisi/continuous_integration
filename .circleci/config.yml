@@ -1,19 +1,16 @@
 
 version: 2.1
 
-orbs:
-  welcome: circleci/welcome-orb@0.4.1
-
-commands:
-  print_pipeline_id:
-    steps:
-      - run: echo ${CIRCLE_WORKFLOW_ID}
 jobs:
   my_job:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - print_pipeline_id
+      - run: exit 1 # simulating error exit code
+      - run:
+          name: on error
+          command: echo "Its an error"
+          when: on_fail
 workflows:
   my_workflow:
     jobs:
